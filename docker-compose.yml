@@ -30,8 +30,16 @@ services:
       - "8080:8080"
     environment:
       MERCHANTS_URL: http://service-merchants:8080
+      FRONTEND_URL: http://localhost
     depends_on:
       - service-merchants
+
+  frontend:
+    build: ../frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
 
 volumes:
   merchants-data:
