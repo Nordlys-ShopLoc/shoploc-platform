@@ -18,6 +18,8 @@ services:
     environment:
       SERVER_PORT: 8080
       SPRING_DATASOURCE_URL: jdbc:postgresql://merchants-db:5432/merchants
+      SPRING_DATASOURCE_USERNAME: merchants
+      SPRING_DATASOURCE_PASSWORD: merchants
     depends_on:
       merchants-db:
         condition: service_healthy
