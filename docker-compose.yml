@@ -1,0 +1,45 @@
+services:
+
+  merchants-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: merchants
+      POSTGRES_USER: merchants
+      POSTGRES_PASSWORD: merchants
+    volumes:
+      - merchants-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U merchants"]
+      interval: 5s
+      retries: 5
+
+  service-merchants:
+    build: ../service-merchants
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://merchants-db:5432/merchants
+      SPRING_DATASOURCE_USERNAME: merchants
+      SPRING_DATASOURCE_PASSWORD: merchants
+    depends_on:
+      merchants-db:
+        condition: service_healthy
+
+  api-gateway:
+    build: ../api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      MERCHANTS_URL: http://service-merchants:8080
+      FRONTEND_URL: http://localhost
+    depends_on:
+      - service-merchants
+
+  frontend:
+    build: ../frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+
+volumes:
+  merchants-data:
