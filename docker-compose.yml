@@ -5,11 +5,24 @@ services:
     environment:
       POSTGRES_DB: merchants
       POSTGRES_USER: merchants
-      POSTGRES_PASSWORD: merchants
+      POSTGRES_PASSWORD: ${MERCHANTS_DB_PASSWORD:?set it in .env}
     volumes:
       - merchants-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U merchants"]
+      interval: 5s
+      retries: 5
+
+  accounts-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: accounts
+      POSTGRES_USER: accounts
+      POSTGRES_PASSWORD: ${ACCOUNTS_DB_PASSWORD:?set it in .env}
+    volumes:
+      - accounts-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U accounts"]
       interval: 5s
       retries: 5
 
@@ -19,9 +32,20 @@ services:
       SERVER_PORT: 8080
       SPRING_DATASOURCE_URL: jdbc:postgresql://merchants-db:5432/merchants
       SPRING_DATASOURCE_USERNAME: merchants
-      SPRING_DATASOURCE_PASSWORD: merchants
+      SPRING_DATASOURCE_PASSWORD: ${MERCHANTS_DB_PASSWORD:?set it in .env}
     depends_on:
       merchants-db:
+        condition: service_healthy
+
+  service-accounts:
+    build: ../service-accounts
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://accounts-db:5432/accounts
+      SPRING_DATASOURCE_USERNAME: accounts
+      SPRING_DATASOURCE_PASSWORD: ${ACCOUNTS_DB_PASSWORD:?set it in .env}
+    depends_on:
+      accounts-db:
         condition: service_healthy
 
   api-gateway:
@@ -30,9 +54,10 @@ services:
       - "8080:8080"
     environment:
       MERCHANTS_URL: http://service-merchants:8080
-      FRONTEND_URL: http://localhost
+      ACCOUNTS_URL: http://service-accounts:8080
     depends_on:
       - service-merchants
+      - service-accounts
 
   frontend:
     build: ../frontend
@@ -43,3 +68,4 @@ services:
 
 volumes:
   merchants-data:
+  accounts-data:
