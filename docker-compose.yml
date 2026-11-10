@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: merchants
       POSTGRES_USER: merchants
-      POSTGRES_PASSWORD: merchants
+      POSTGRES_PASSWORD: ${MERCHANTS_DB_PASSWORD:?set it in .env}
     volumes:
       - merchants-data:/var/lib/postgresql/data
     healthcheck:
@@ -18,7 +18,7 @@ services:
     environment:
       POSTGRES_DB: accounts
       POSTGRES_USER: accounts
-      POSTGRES_PASSWORD: accounts
+      POSTGRES_PASSWORD: ${ACCOUNTS_DB_PASSWORD:?set it in .env}
     volumes:
       - accounts-data:/var/lib/postgresql/data
     healthcheck:
@@ -32,7 +32,7 @@ services:
       SERVER_PORT: 8080
       SPRING_DATASOURCE_URL: jdbc:postgresql://merchants-db:5432/merchants
       SPRING_DATASOURCE_USERNAME: merchants
-      SPRING_DATASOURCE_PASSWORD: merchants
+      SPRING_DATASOURCE_PASSWORD: ${MERCHANTS_DB_PASSWORD:?set it in .env}
     depends_on:
       merchants-db:
         condition: service_healthy
@@ -43,7 +43,7 @@ services:
       SERVER_PORT: 8080
       SPRING_DATASOURCE_URL: jdbc:postgresql://accounts-db:5432/accounts
       SPRING_DATASOURCE_USERNAME: accounts
-      SPRING_DATASOURCE_PASSWORD: accounts
+      SPRING_DATASOURCE_PASSWORD: ${ACCOUNTS_DB_PASSWORD:?set it in .env}
     depends_on:
       accounts-db:
         condition: service_healthy
