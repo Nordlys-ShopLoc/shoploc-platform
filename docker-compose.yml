@@ -44,6 +44,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://accounts-db:5432/accounts
       SPRING_DATASOURCE_USERNAME: accounts
       SPRING_DATASOURCE_PASSWORD: ${ACCOUNTS_DB_PASSWORD:?set it in .env}
+      JWT_SECRET: ${JWT_SECRET:?set it in .env}
     depends_on:
       accounts-db:
         condition: service_healthy
