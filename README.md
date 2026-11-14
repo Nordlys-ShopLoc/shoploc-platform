@@ -68,6 +68,7 @@ docker compose down -v    # supprime aussi les bases
 |---|---|
 | `MERCHANTS_DB_PASSWORD` | mot de passe de merchants-db |
 | `ACCOUNTS_DB_PASSWORD` | mot de passe de accounts-db |
+| `JWT_SECRET` | clé de signature des jetons de connexion, 32 caractères minimum |
 
 PostgreSQL ne lit le mot de passe qu'à la création d'une base. S'il change ensuite, il faut recréer les bases avec `docker compose down -v`.
 
