@@ -56,6 +56,7 @@ services:
     environment:
       MERCHANTS_URL: http://service-merchants:8080
       ACCOUNTS_URL: http://service-accounts:8080
+      JWT_SECRET: ${JWT_SECRET:?set it in .env}
     depends_on:
       - service-merchants
       - service-accounts
